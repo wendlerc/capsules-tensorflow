@@ -3,7 +3,7 @@ Another implementation of Hinton's capsule networks in tensorflow.
 
 At the moment the implementation provides the means to set up the model presented in https://arxiv.org/abs/1710.09829.
 
-## Implemented: 
+## Implemented (capsule.py): 
 * fully connected capsule layers with routing
 * convolutional capsule layers without routing
 
