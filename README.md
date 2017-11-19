@@ -12,5 +12,7 @@ At the moment the implementation provides the means to set up the model presente
 * add decoder net for regularization
 * speed things up
 
-For a minimal example please have a look at: main_capsnet.py. In this file a CapsNet with the architecture proposed in the
-linked paper is trained on the fashion MNIST dataset (without regularization).
+For a minimal example please have a look at: main_mnist_capsnet.py. In this file a CapsNet with the architecture proposed in the
+linked paper is trained on the MNIST dataset (without regularization). Alternatively, if you have keras installed you can train the same CapsNet on the fashion MNIST dataset by running main_capsnet.py.
+
+I am new to tensorflow, therefore, feedback regarding coding style or mistakes is very appreciated!
