@@ -79,7 +79,7 @@ class _ConvCaps(base.Layer):
     def call(self, inputs):
         w, h = self.kernel_size
         sx, sy = self.strides
-        out = tf.layers.conv3d(inputs, self.filters*self.dim, (w, h, self.dim_in), (sx, sy, 1))
+        out = tf.layers.conv3d(inputs, self.filters*self.dim, (w, h, self.dim_in), (sx, sy, 1))#, activation=tf.nn.relu)
         out = tf.reshape(out, [-1, out.shape[1].value, out.shape[2].value, self.dim, self.filters])
         return out
 

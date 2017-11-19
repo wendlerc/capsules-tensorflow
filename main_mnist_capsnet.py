@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
 import capsule as caps
-from load_data import load_data
 
 epsilon = 1e-9
 
@@ -11,7 +10,6 @@ def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
     L_absent = (1-T)*tf.square(tf.maximum(0., lengths - m_minus))
     L = L_present + l*L_absent 
     return tf.reduce_mean(tf.reduce_sum(L, axis=1))
-    
 
 def caps_model_fn(features, labels, mode):
     """Model function for CNN."""
@@ -71,33 +69,15 @@ def caps_model_fn(features, labels, mode):
 
 
 def main(unused_argv):
-    (x_train, y_train), (x_test, y_test) = load_data()
-    
-    labels = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal',
-              'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
-    
-    img_rows, img_cols = x_train[0].shape
-    
-    ''' Normalizing data '''
-    x_train = x_train.astype(np.float32)
-    x_test = x_test.astype(np.float32)
-    x_train /= 255
-    x_test /= 255    
-    
-    x_train = np.expand_dims(x_train, 3)
-    x_test = np.expand_dims(x_test, 3)
-    
-    
-    # Load training and eval data
-    train_data = x_train  # Returns np.array
-    train_labels = y_train
-    eval_data = x_test  # Returns np.array
-    eval_labels = y_test
-    
+    mnist = tf.contrib.learn.datasets.load_dataset("mnist")
+    train_data = mnist.train.images  # Returns np.array
+    train_labels = np.asarray(mnist.train.labels, dtype=np.int32)
+    eval_data = mnist.test.images  # Returns np.array
+    eval_labels = np.asarray(mnist.test.labels, dtype=np.int32)
     # Create the Estimator
     mnist_classifier = tf.estimator.Estimator(
       model_fn=caps_model_fn, 
-      model_dir="/tmp/caps_fmnist_sml")
+      model_dir="/tmp/caps_mnist_sml")
 
     # Train the model
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
@@ -117,6 +97,7 @@ def main(unused_argv):
     eval_results = mnist_classifier.evaluate(input_fn=eval_input_fn)
     accuracy_score = mnist_classifier.evaluate(input_fn=eval_input_fn)["accuracy"]
     print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
+
     print(eval_results)
 
 
