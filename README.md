@@ -16,3 +16,6 @@ For a minimal example please have a look at: main_mnist_capsnet.py. In this file
 linked paper is trained on the MNIST dataset (without regularization). Alternatively, if you have keras installed you can train the same CapsNet on the fashion MNIST dataset by running main_capsnet.py.
 
 I am new to tensorflow, therefore, feedback regarding coding style or mistakes is appreciated!
+
+### Other Implementations:
+* Clean Keras implementation: https://github.com/XifengGuo/CapsNet-Keras
