@@ -1,7 +1,7 @@
 # capsules-tensorflow
 Another implementation of Hinton's capsule networks in tensorflow.
 
-At the moment the implementation provides the means to set up the model presented in https://arxiv.org/abs/1710.09829.
+At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829).
 
 ## Implemented (capsule.py): 
 * fully connected capsule layers with routing
@@ -18,4 +18,4 @@ linked paper is trained on the MNIST dataset (without regularization). Alternati
 I am new to tensorflow, therefore, feedback regarding coding style or mistakes is appreciated!
 
 ### Other Implementations:
-* Clean Keras implementation: https://github.com/XifengGuo/CapsNet-Keras
+* Clean Keras implementation: [Xifeng Guo](https://github.com/XifengGuo/CapsNet-Keras)
