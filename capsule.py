@@ -42,7 +42,7 @@ class _Caps(base.Layer):
         self.routing(inputs_hat)
         c = tf.nn.softmax(self.b, dim=2) 
         outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
-        outputs = tf.squeeze(outputs)
+        outputs = tf.reshape(outputs, [-1, self.units, self.dim])
         return outputs
 
     def _compute_output_shape(self, input_shape):
@@ -84,6 +84,7 @@ class _ConvCaps(base.Layer):
         return out
 
     def _compute_output_shape(self, input_shape):
+        print("hina")
         input_shape = tensor_shape.TensorShape(input_shape).as_list()
         space = input_shape[1:-2]
         new_space = []
@@ -94,12 +95,11 @@ class _ConvCaps(base.Layer):
             padding=self.padding,
             stride=self.strides[i])
             new_space.append(new_dim)
-        output_shape = tensor_shape.TensorShape([input_shape[0], new_space, self.dim, self.filters])       
+        output_shape = tensor_shape.TensorShape([input_shape[0]] + new_space + [self.dim, self.filters])       
         return output_shape
     
     def routing(self, inputs):
         assert self.iter_routing==0, 'Routing not implemented yet'
-
             
 def squash(tensor, axis=-1, epsilon=1e-9):
     """Squashes length of a vectors in specified input tensor's axis to the interval (0,1). 
@@ -129,4 +129,6 @@ def conv2d(inputs, filters, dim, kernel_size, strides=(1 , 1),
     layer = _ConvCaps(filters, dim, kernel_size, strides=strides, iter_routing=iter_routing, 
                   trainable=trainable, name=name)
     return layer.apply(inputs)
+
+
 
