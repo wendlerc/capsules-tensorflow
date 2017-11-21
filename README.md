@@ -13,10 +13,10 @@ Here are some reconstructions of testset digits obtained by the encoder of a cap
 ![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_7.png "7")
 
 
-## Implemented (capsule.py): 
-* fully connected capsule layers with routing
-* convolutional capsule layers without routing
-* regularization
+## Implemented: 
+* fully connected capsule layers with routing (capsule.py)
+* convolutional capsule layers without routing (capsule.py)
+* regularization (main_mnist_capsnet.py)
 
 ## TODO:
 * train for many epochs
