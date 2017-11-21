@@ -27,18 +27,19 @@ class _Caps(base.Layer):
         #self.b = tf.constant(np.zeros([1, self.input_num_capsule, self.num_outputs, 1, 1]), dtype=np.float32)
         self.b = tf.get_variable('b', shape=[1, self.units_in, self.units, 1, 1], 
                                  dtype=tf.float32, initializer=tf.zeros_initializer)
-        self.W = tf.get_variable('W', shape=[self.units_in, self.units, self.dim_in, self.dim],
+        self.W = tf.get_variable('W', shape=[1, self.units_in, self.units, self.dim_in, self.dim],
                                  dtype=tf.float32, initializer=self.kernel_initializer)
         self.built = True
         
     def call(self, inputs):
-        inputs = tf.expand_dims(tf.expand_dims(inputs, axis=2), axis=2)
-        inputs = tf.tile(inputs, [1, 1, self.units, 1, 1])
         # input shape after preparation:
         #       [?, units_in, units, 1, dim_in]
-        # W shape: [units_in, units, dim_in, dim]
-        inputs_hat = tf.map_fn(lambda x: tf.matmul(x, self.W), elems=inputs)
+        # W_tile shape: [?, units_in, units, dim_in, dim]
+        inputs = tf.expand_dims(tf.expand_dims(inputs, axis=2), axis=2)
+        inputs = tf.tile(inputs, [1, 1, self.units, 1, 1])
+        W_tile = tf.tile(self.W, [tf.shape(inputs)[0], 1, 1, 1, 1])
         # inputs_hat: [?, units_in, units, 1, dim]
+        inputs_hat = tf.matmul(inputs, W_tile)
         self.routing(inputs_hat)
         c = tf.nn.softmax(self.b, dim=2) 
         outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
@@ -59,7 +60,7 @@ class _Caps(base.Layer):
             self.b += tf.reduce_sum(inputs * outputs, axis=-1, keep_dims=True)
             
 class _ConvCaps(base.Layer):
-    """Capsule Layer
+    """Capsule Layer.
     """
     def __init__(self, filters, dim, kernel_size, strides=(1 , 1), 
                  padding='valid', iter_routing=2, trainable=True, name=None,**kwargs):
