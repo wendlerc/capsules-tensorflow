@@ -108,7 +108,7 @@ def main(unused_argv):
     # Create the Estimator
     mnist_classifier = tf.estimator.Estimator(
       model_fn=caps_model_fn, 
-      model_dir="/tmp/caps_mnist_sml_regularized_r2_correctedsoftmax")
+      model_dir="/tmp/caps_mnist_sml_regularized_r2_github")
 
     # Train the model
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
@@ -132,7 +132,7 @@ def main(unused_argv):
     print(eval_results)
     if regularization:
         # do some predictions and reconstructions
-        num = 20
+        num = 100
         pred_input_fn = tf.estimator.inputs.numpy_input_fn(
             x={"x": eval_data[:num]},
             num_epochs=1,
