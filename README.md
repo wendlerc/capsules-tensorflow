@@ -3,17 +3,30 @@ Another implementation of Hinton's capsule networks in tensorflow.
 
 At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829).
 
-## Implemented (capsule.py): 
-* fully connected capsule layers with routing
-* convolutional capsule layers without routing
+## Preliminary results:
+Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 5 epochs with regularization and iter_routing=2:
+
+![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_0.png "0")
+![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_1.png "1")
+![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_2.png "2")
+![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_4.png "4")
+![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_7.png "7")
+
+
+## Implemented: 
+* fully connected capsule layers with routing (capsule.py)
+* convolutional capsule layers without routing (capsule.py)
+* regularization (main_mnist_capsnet.py)
 
 ## TODO:
+* train for many epochs
+* give everything names for a more pretty tensorboard graph
 * convoutional capsule layers with routing
-* add decoder net for regularization
 * speed things up
 
 For a minimal example please have a look at: main_mnist_capsnet.py. In this file a CapsNet with the architecture proposed in the
-linked paper is trained on the MNIST dataset (without regularization). Alternatively, if you have keras installed you can train the same CapsNet on the fashion MNIST dataset by running main_capsnet.py.
+linked paper is trained on the MNIST dataset. 
+
 
 I am new to tensorflow, therefore, feedback regarding coding style or mistakes is appreciated!
 
