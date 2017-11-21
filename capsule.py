@@ -40,7 +40,7 @@ class _Caps(base.Layer):
         inputs_hat = tf.map_fn(lambda x: tf.matmul(x, self.W), elems=inputs)
         # inputs_hat: [?, units_in, units, 1, dim]
         self.routing(inputs_hat)
-        c = tf.nn.softmax(self.b, dim=1) 
+        c = tf.nn.softmax(self.b, dim=2) 
         outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
         outputs = tf.reshape(outputs, [-1, self.units, self.dim])
         return outputs
@@ -54,7 +54,7 @@ class _Caps(base.Layer):
         # b shape: [1, units_in, units, 1, 1]
         # inputs:  [?, units_in, units, 1, dim]
         for i in range(self.iter_routing):
-            c = tf.nn.softmax(self.b, dim=1) 
+            c = tf.nn.softmax(self.b, dim=2) 
             outputs = squash(tf.reduce_sum(c * inputs, axis=1, keep_dims=True))
             self.b += tf.reduce_sum(inputs * outputs, axis=-1, keep_dims=True)
             
