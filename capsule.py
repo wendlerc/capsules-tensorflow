@@ -59,7 +59,7 @@ class _Caps(base.Layer):
             self.b += tf.reduce_sum(inputs * outputs, axis=-1, keep_dims=True)
             
 class _ConvCaps(base.Layer):
-    """Capsule Layer.
+    """Capsule Layer
     """
     def __init__(self, filters, dim, kernel_size, strides=(1 , 1), 
                  padding='valid', iter_routing=2, trainable=True, name=None,**kwargs):
