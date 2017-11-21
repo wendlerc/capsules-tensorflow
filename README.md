@@ -4,7 +4,7 @@ Another implementation of Hinton's capsule networks in tensorflow.
 At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829).
 
 ## Preliminary results:
-Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 5 epochs with regularization and iter_routing=2:
+Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 20 epochs with regularization and iter_routing=2:
 
 ![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_0.png "0")
 ![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/regularization1_routing2_epochs5/recon_1.png "1")
