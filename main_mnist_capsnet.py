@@ -2,15 +2,18 @@ import tensorflow as tf
 import numpy as np
 import capsule as caps
 from matplotlib import pyplot as plt
+from keras.preprocessing.image import ImageDataGenerator
 
+dataset_size = 60000
 epsilon = 1e-9
 regularization = True
 lambda_reg = 0.0005
 iter_routing = 2
 num_epochs = 50
 batch_size = 64
+steps_per_epoch = dataset_size/batch_size
 start_lr = 0.001
-decay_steps = 60000/batch_size
+decay_steps = steps_per_epoch
 decay_rate = 0.9
 plot_num = 20
 config = tf.estimator.RunConfig(save_summary_steps=100, log_step_count_steps=100)
@@ -127,13 +130,13 @@ def main(unused_argv):
       model_dir=model_dir)
 
     # Train the model
-    train_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={"x": train_data},
-        y=train_labels,
-        batch_size=batch_size,
-        num_epochs=num_epochs,
-        shuffle=True)
-    mnist_classifier.train(input_fn=train_input_fn)
+    generator = ImageDataGenerator(width_shift_range=2/28, height_shift_range=2/28)
+    train_data_im = np.reshape(train_data, [-1, 28, 28, 1])
+    def train_input_fn():
+        imgs, labels = generator.flow(train_data_im, train_labels, batch_size=batch_size).next()
+        imgs = np.reshape(imgs, [-1, 28*28])
+        return {"x": imgs}, labels
+    mnist_classifier.train(input_fn=train_input_fn, steps=steps_per_epoch*num_epochs)
   
     # Evaluate the model and print results
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
