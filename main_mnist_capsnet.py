@@ -2,13 +2,14 @@ import tensorflow as tf
 import numpy as np
 import capsule as caps
 from matplotlib import pyplot as plt
+from keras.preprocessing.image import ImageDataGenerator
 
 dataset_size = 60000
 epsilon = 1e-9
 regularization = True
 lambda_reg = 0.0005
 iter_routing = 2
-num_epochs = 2
+num_epochs = 20
 batch_size = 64
 steps_per_epoch = dataset_size/batch_size
 start_lr = 0.001
@@ -16,7 +17,7 @@ decay_steps = steps_per_epoch
 decay_rate = 0.9
 plot_num = 20
 config = tf.estimator.RunConfig(save_summary_steps=100, log_step_count_steps=100)
-model_dir = "/tmp/caps_mnist_sml_regularized"
+model_dir = "/tmp/caps_mnist_sml_regularized_aug_1"
 
 def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
     T = onehot_labels
@@ -129,14 +130,18 @@ def main(unused_argv):
       model_dir=model_dir)
 
     # Train the model
+    generator = ImageDataGenerator(width_shift_range=2/28, height_shift_range=2/28)
+    train_data_im = np.reshape(train_data, [-1, 28, 28, 1])
+    flow = generator.flow(train_data_im, train_labels, batch_size=num_epochs*dataset_size)
+    train_data, train_labels = flow.next()
+    train_data = np.reshape(train_data, [-1, 28*28])
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": train_data},
         y=train_labels,
         batch_size=batch_size,
-        num_epochs=num_epochs,
+        num_epochs=None,
         shuffle=True)
-    mnist_classifier.train(input_fn=train_input_fn)
-    
+    mnist_classifier.train(input_fn=train_input_fn, steps=steps_per_epoch*num_epochs)
   
     # Evaluate the model and print results
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
