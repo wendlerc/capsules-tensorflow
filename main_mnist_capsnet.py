@@ -72,8 +72,7 @@ def caps_model_fn(features, labels, mode):
     primarycaps = caps.conv2d(conv1, 32, 8, [9,9], strides=(2,2), name="PrimaryCaps")
     primarycaps = tf.reshape(primarycaps, [-1, primarycaps.shape[1].value*primarycaps.shape[2].value*32, 8])
     # Fully connected capsules with routing by agreement
-    digitcaps_layer = caps.dense_layer(10, 16, iter_routing=iter_routing, mapfn_parallel_iterations=mapfn_parallel_iterations, name="DigitCaps")
-    digitcaps = digitcaps_layer.apply(primarycaps)
+    digitcaps = caps.dense(primarycaps, 10, 16, iter_routing=iter_routing, mapfn_parallel_iterations=mapfn_parallel_iterations, name="DigitCaps")
     # The length of the capsule activation vectors encodes the probability of an entity being present
     lengths = tf.sqrt(tf.reduce_sum(tf.square(digitcaps),axis=2) + epsilon, name="Lengths")
     
@@ -109,7 +108,6 @@ def caps_model_fn(features, labels, mode):
     
     # Configure the Training Op (for TRAIN mode)
     if mode == tf.estimator.ModeKeys.TRAIN:
-        tf.summary.histogram("coupling_coeff_b", digitcaps_layer.b)
         # Summary hook
         summary_hook = tf.train.SummarySaverHook(
                 save_steps=config.save_summary_steps,

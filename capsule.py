@@ -25,8 +25,8 @@ class _Caps(base.Layer):
         self.units_in = input_shape[1]
         self.dim_in = input_shape[2]
         #self.b = tf.zeros([1, self.units_in, self.units, 1, 1])
-        self.b = tf.get_variable('b', shape=[1, self.units_in, self.units, 1, 1], 
-                                 dtype=tf.float32, initializer=tf.zeros_initializer)
+        #self.b = tf.get_variable('b', shape=[1, self.units_in, self.units, 1, 1], 
+        #                         dtype=tf.float32, initializer=tf.zeros_initializer)
         self.W = tf.get_variable('W', shape=[1, self.units_in, self.units, self.dim_in, self.dim],
                                  dtype=tf.float32, initializer=self.kernel_initializer)
         self.built = True
@@ -61,7 +61,9 @@ class _Caps(base.Layer):
     def _routing(self, inputs_hat):
         # b shape: [1, units_in, units, 1, 1]
         # inputs:  [?, units_in, units, 1, dim]
-        b_tiled = tf.tile(self.b, [tf.shape(inputs_hat)[0], 1, 1, 1, 1])
+        #b_tiled = tf.tile(self.b, [tf.shape(inputs_hat)[0], 1, 1, 1, 1])
+        #constant b: copy paste from Xifeng Guo, I do not manage to learn a decent initial value for b so far.
+        b_tiled = tf.zeros([tf.shape(inputs_hat)[0], self.units_in, self.units, 1, 1])
         for i in range(self.iter_routing):
             c = tf.nn.softmax(b_tiled, dim=2) 
             outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
