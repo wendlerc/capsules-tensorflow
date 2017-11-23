@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import capsule as caps
 from matplotlib import pyplot as plt
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.python.keras._impl.keras.preprocessing.image import ImageDataGenerator
 
 dataset_size = 60000
 epsilon = 1e-9
