@@ -4,7 +4,7 @@ Another implementation of Hinton's capsule networks in tensorflow. At the moment
 ## Preliminary results:
 Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 20 epochs with regularization and iter_routing=2:
 
-![alt text](https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/results_20epochs.png "odd lines: inputs, even lines: reconstructions"| width=560))
+<img src="https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/results_20epochs.png" width="560" heigth="1120"> 
 
 
 The odd lines contain the input digits and the even lines the reconstructed digits. For the reconstruction the orientation of the longest DigitCapsule vector is used.
