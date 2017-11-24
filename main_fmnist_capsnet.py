@@ -18,11 +18,11 @@ steps_train = steps_per_epoch*num_epochs
 start_lr = 0.001
 decay_steps = steps_per_epoch
 decay_rate = 0.9
-plot_num = 50
+plot_num = 100
 config = tf.estimator.RunConfig(save_summary_steps=100, log_step_count_steps=100)
 model_dir = "/tmp/fashion_mnist/r2_learnb_reg1"
 mapfn_parallel_iterations = None
-    
+
 def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
     T = onehot_labels
     L_present = T*tf.square(tf.maximum(0., m_plus - lengths))
@@ -50,8 +50,7 @@ def decoder_nn(capsule_features, name="reconstruction"):
     fc1 = tf.layers.dense(capsule_features, 512, activation=tf.nn.relu, name=name1)
     fc2 = tf.layers.dense(fc1, 1024, activation=tf.nn.relu, name=name2)
     reconstruction = tf.layers.dense(fc2, 784, activation=tf.nn.sigmoid, name=name3)
-    return reconstruction
-    
+    return reconstruction    
 
 def caps_model_fn(features, labels, mode):
     """Model function for CNN."""
@@ -187,20 +186,10 @@ def main(unused_argv):
             num_epochs=1,
             shuffle=False)
         predictions = mnist_classifier.predict(input_fn=pred_input_fn)
-        moepmoep = []
-        for i, (x, p) in enumerate(zip(eval_data[:plot_num],predictions)):
-            fig, axes = plt.subplots(nrows=1, ncols=2)
-            axes[0].set_title("Digit:")
-            axes[0].imshow(np.reshape(x,(28,28)), cmap='gray')
-            axes[1].set_title("Recon:"+str(p["classes"]))
-            pred_reshaped = np.reshape(p["reconstruction"],(28,28))
-            axes[1].imshow(pred_reshaped,cmap='gray')
-            fig.tight_layout()
-            plt.show()
-            moepmoep += [pred_reshaped]
-        
-        moep = np.reshape(eval_data[:plot_num], (-1, 28, 28))
-        plt.imshow(reconMashup(moep, moepmoep), cmap='gray')
+        prediction_pics = [np.reshape(p['reconstruction'], (28,28)) for p in predictions]
+        eval_pics = np.reshape(eval_data[:plot_num], (-1, 28, 28))
+        plt.imshow(reconMashup(eval_pics, prediction_pics), cmap='gray')
+        plt.axis('off')
             
 if __name__ == "__main__":
     tf.app.run()

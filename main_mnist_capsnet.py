@@ -3,24 +3,25 @@ import numpy as np
 import capsule as caps
 from matplotlib import pyplot as plt
 from tensorflow.python.keras._impl.keras.preprocessing.image import ImageDataGenerator
+from utils import reconMashup
 
 dataset_size = 60000
 epsilon = 1e-9
 regularization = True
 lambda_reg = 0.0005
 iter_routing = 3
-num_epochs = 20
-batch_size = 64
+num_epochs = 10
+batch_size = 100
 steps_per_epoch = dataset_size/batch_size
 steps_train = steps_per_epoch*num_epochs 
 start_lr = 0.001
 decay_steps = steps_per_epoch
 decay_rate = 0.9
-plot_num = 0
+plot_num = 100
 config = tf.estimator.RunConfig(save_summary_steps=100, log_step_count_steps=100)
-model_dir = "/tmp/summary_test"
-mapfn_parallel_iterations = None#batch_size
-
+model_dir = "/tmp/remote/r3_learnb_reg1"
+mapfn_parallel_iterations = 10
+    
 def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
     T = onehot_labels
     L_present = T*tf.square(tf.maximum(0., m_plus - lengths))
@@ -163,8 +164,6 @@ def main(unused_argv):
         shuffle=False)
 
     eval_results = mnist_classifier.evaluate(input_fn=eval_input_fn)
-    accuracy_score = eval_results["accuracy"]
-    print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
     print(eval_results)
     if regularization:
         # do some predictions and reconstructions
@@ -174,15 +173,10 @@ def main(unused_argv):
             num_epochs=1,
             shuffle=False)
         predictions = mnist_classifier.predict(input_fn=pred_input_fn)
-        
-        for i, (x, p) in enumerate(zip(eval_data[:plot_num],predictions)):
-            fig, axes = plt.subplots(nrows=1, ncols=2)
-            axes[0].set_title("Digit:")
-            axes[0].imshow(np.reshape(x,(28,28)), cmap='gray')
-            axes[1].set_title("Recon:"+str(p["classes"]))
-            axes[1].imshow(np.reshape(p["reconstruction"],(28,28)),cmap='gray')
-            fig.tight_layout()
-            plt.show()
+        prediction_pics = [np.reshape(p['reconstruction'], (28,28)) for p in predictions]
+        eval_pics = np.reshape(eval_data[:plot_num], (-1, 28, 28))
+        plt.imshow(reconMashup(eval_pics, prediction_pics), cmap='gray')
+        plt.axis('off')
             
 if __name__ == "__main__":
     tf.app.run()
