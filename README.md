@@ -9,6 +9,10 @@ Here are some reconstructions of testset digits obtained by the encoder of a cap
 
 The odd lines contain the input digits and the even lines the reconstructed digits. For the reconstruction the orientation of the longest DigitCapsule vector is used.
 
+Reconstructions for the fashion MNIST dataset after 10 epochs with regularization and iter_routing=2:
+
+<img src="https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/results_10epochs_fmnist.png" width="560" heigth="560"> 
+
 ## Implemented: 
 * fully connected capsule layers with routing (capsule.py)
 * convolutional capsule layers without routing (capsule.py)
