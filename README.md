@@ -31,3 +31,10 @@ I am new to tensorflow, therefore, feedback regarding coding style or mistakes i
 
 ### Other Implementations:
 * Clean Keras implementation: [Xifeng Guo](https://github.com/XifengGuo/CapsNet-Keras)
+
+<!--
+  Title: Capsule Networks 
+  Description: A tensorflow implementation of Hinton's capsule networks.
+  -->
+
+<meta name='keywords' content='capsules, hinton, capsnet, capsules tensorflow, capsnet tensorflow'>
