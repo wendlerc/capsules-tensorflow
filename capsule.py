@@ -66,7 +66,7 @@ class _Caps(base.Layer):
         for i in range(self.iter_routing):
             c = tf.nn.softmax(b_tiled, dim=2) 
             outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
-            tf.reduce_sum(inputs_hat * outputs, axis=-1, keep_dims=True)
+            b_tiled = tf.reduce_sum(inputs_hat * outputs, axis=-1, keep_dims=True)
         return b_tiled
             
 class _ConvCaps(base.Layer):
