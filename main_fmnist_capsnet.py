@@ -24,16 +24,16 @@ model_dir = "/tmp/fashion_mnist/r2_learnb_reg1"
 mapfn_parallel_iterations = None
 
 def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
-    T = onehot_labels
-    L_present = T*tf.square(tf.maximum(0., m_plus - lengths))
-    L_absent = (1-T)*tf.square(tf.maximum(0., lengths - m_minus))
+    T = tf.to_float(onehot_labels)
+    lengths = tf.to_float(lengths)
+    L_present = T*tf.square(tf.nn.relu(m_plus - lengths))
+    L_absent = (1-T)*tf.square(tf.nn.relu(lengths - m_minus))
     L = L_present + l*L_absent 
-    return tf.reduce_mean(tf.reduce_sum(L, axis=1), name="Margin_Loss")
+    return tf.losses.compute_weighted_loss(tf.reduce_sum(L, axis=1))
 
 def reconstruction_loss(inputs, reconstruction):
     inputs_flat = tf.layers.Flatten()(inputs)
-    n = tf.cast(inputs_flat.shape[-1].value, tf.float32)
-    return tf.multiply(n, tf.losses.mean_squared_error(inputs_flat, reconstruction), name="Reconstruction_Loss")
+    return tf.losses.mean_squared_error(inputs_flat, reconstruction)
 
 def mask_one(capsule_vectors, mask, is_predicting=False):
     if is_predicting:
