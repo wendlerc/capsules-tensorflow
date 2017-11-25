@@ -1,5 +1,5 @@
 # capsules-tensorflow
-Another implementation of Hinton's capsule networks in tensorflow. At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829). Everything seems to work now. Accuracy with 3 routing iterations, regularization, a batch size of 256 and 20 epochs of training: 99,5%. Lager experiments are performed at the moment.
+Another implementation of Hinton's capsule networks in tensorflow. At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829). Everything seems to work now. Accuracy with 3 routing iterations, regularization, a batch size of 256 and 20 epochs of training: 99,5%. Larger experiments are performed at the moment.
 
 ## Preliminary results:
 Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 20 and 100 epochs with regularization and iter_routing=2:
