@@ -8,10 +8,10 @@ from utils import reconMashup
 dataset_size = 60000
 epsilon = 1e-9
 regularization = True
-lambda_reg = 0.0005
-iter_routing = 3
-num_epochs = 10
-batch_size = 100
+lambda_reg = 0.4 # ~ 0.0005*28*28
+iter_routing = 2 # routing 2 in this implementation corresponds to routing 3 in the paper
+num_epochs = 100
+batch_size = 128
 steps_per_epoch = dataset_size/batch_size
 steps_train = steps_per_epoch*num_epochs 
 start_lr = 0.001
@@ -19,8 +19,8 @@ decay_steps = steps_per_epoch
 decay_rate = 0.9
 plot_num = 100
 config = tf.estimator.RunConfig(save_summary_steps=100, log_step_count_steps=100)
-model_dir = "/tmp/remote/r3_learnb_reg1"
-mapfn_parallel_iterations = 10
+model_dir = "/tmp/mnist/r2_reg1"
+mapfn_parallel_iterations = batch_size
     
 def margin_loss(onehot_labels, lengths, m_plus=0.9, m_minus=0.1, l=0.5):
     T = tf.to_float(onehot_labels)
