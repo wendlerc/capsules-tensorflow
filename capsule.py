@@ -25,12 +25,13 @@ from tensorflow.python.layers import utils
 class _Caps(base.Layer):
     """Capsule Layer.
     """
-    def __init__(self, units, dim, iter_routing=2, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+    def __init__(self, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
                name=None,**kwargs):
         super(_Caps, self).__init__(trainable=trainable, name=name, **kwargs)
         self.units = units
         self.dim = dim
         self.iter_routing = iter_routing
+        self.learn_coupling = learn_coupling
         self.mapfn_parallel_iterations = mapfn_parallel_iterations
         if kernel_initializer == None:
             self.kernel_initializer = tf.random_normal_initializer(stddev=0.01)
@@ -41,9 +42,9 @@ class _Caps(base.Layer):
         assert len(input_shape) == 3, 'Required input shape=[None, units_in, dim_in]'
         self.units_in = input_shape[1]
         self.dim_in = input_shape[2]
-        #self.b = tf.zeros([1, self.units_in, self.units, 1, 1])
-        self.b = tf.get_variable('b', shape=[1, self.units_in, self.units, 1, 1], 
-                                 dtype=tf.float32, initializer=tf.zeros_initializer)
+        if self.learn_coupling:
+            self.b = tf.get_variable('b', shape=[1, self.units_in, self.units, 1, 1], 
+                                     dtype=tf.float32, initializer=tf.zeros_initializer)
         self.W = tf.get_variable('W', shape=[1, self.units_in, self.units, self.dim_in, self.dim],
                                  dtype=tf.float32, initializer=self.kernel_initializer)
         self.built = True
@@ -58,11 +59,6 @@ class _Caps(base.Layer):
         outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
         outputs = tf.reshape(outputs, [-1, self.units, self.dim])
         return outputs
-
-    def _compute_output_shape(self, input_shape):
-        input_shape = tensor_shape.TensorShape(input_shape).as_list()
-        output_shape = tensor_shape.TensorShape([input_shape[0], self.units, self.dim])       
-        return output_shape
     
     def _compute_inputs_hat(self, inputs):
         inputs_expanded = tf.expand_dims(tf.expand_dims(inputs, axis=2), axis=2)
@@ -77,14 +73,22 @@ class _Caps(base.Layer):
     
     def _routing(self, inputs_hat):
         # b shape: [1, units_in, units, 1, 1]
-        # inputs:  [?, units_in, units, 1, dim]
-        #b_tiled = tf.zeros([tf.shape(inputs_hat)[0], self.units_in, self.units, 1, 1])
-        b_tiled = tf.tile(self.b, [tf.shape(inputs_hat)[0], 1, 1, 1, 1])
+        # inputs_hat:  [?, units_in, units, 1, dim]
+        if self.learn_coupling:
+            b_tiled = tf.tile(self.b, [tf.shape(inputs_hat)[0], 1, 1, 1, 1])
+        else:
+            b_tiled = tf.zeros([tf.shape(inputs_hat)[0], self.units_in, self.units, 1, 1])
+            
         for i in range(self.iter_routing):
             c = tf.nn.softmax(b_tiled, dim=2) 
             outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
             b_tiled += tf.reduce_sum(inputs_hat * outputs, axis=-1, keep_dims=True)
         return b_tiled
+    
+    def _compute_output_shape(self, input_shape):
+        input_shape = tensor_shape.TensorShape(input_shape).as_list()
+        output_shape = tensor_shape.TensorShape([input_shape[0], self.units, self.dim])       
+        return output_shape
             
 class _ConvCaps(base.Layer):
     """Capsule Layer.
@@ -144,17 +148,17 @@ def squash(tensor, axis=-1, epsilon=1e-9):
     return out
 
 
-def dense(inputs, units, dim, iter_routing=2, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+def dense(inputs, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
                name=None):
-    layer = _Caps(units, dim, iter_routing=iter_routing, 
+    layer = _Caps(units, dim, iter_routing=iter_routing, learn_coupling=learn_coupling,
                   kernel_initializer=kernel_initializer, 
                   mapfn_parallel_iterations=mapfn_parallel_iterations,
                   trainable=trainable, name=name)
     return layer.apply(inputs)
 
-def dense_layer(units, dim, iter_routing=2, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+def dense_layer(units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
                name=None):
-    layer = _Caps(units, dim, iter_routing=iter_routing, 
+    layer = _Caps(units, dim, iter_routing=iter_routing, learn_coupling=learn_coupling,
                   kernel_initializer=kernel_initializer, 
                   mapfn_parallel_iterations=mapfn_parallel_iterations,
                   trainable=trainable, name=name)
