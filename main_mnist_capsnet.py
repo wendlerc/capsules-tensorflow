@@ -152,7 +152,7 @@ def main(unused_argv):
 
     eval_results = mnist_classifier.evaluate(input_fn=eval_input_fn)
     print(eval_results)
-    if lambda_reg > 0:
+    if lambda_reg > 0 and plot_num > 0:
         # do some predictions and reconstructions
         pred_input_fn = tf.estimator.inputs.numpy_input_fn(
             x={"x": eval_data[:plot_num]},
