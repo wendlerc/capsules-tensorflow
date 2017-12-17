@@ -25,7 +25,7 @@ from tensorflow.python.layers import utils
 class _Caps(base.Layer):
     """Capsule Layer.
     """
-    def __init__(self, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+    def __init__(self, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=0, kernel_initializer=None, trainable=True,
                name=None,**kwargs):
         super(_Caps, self).__init__(trainable=trainable, name=name, **kwargs)
         self.units = units
@@ -63,7 +63,7 @@ class _Caps(base.Layer):
     def _compute_inputs_hat(self, inputs):
         inputs_expanded = tf.expand_dims(tf.expand_dims(inputs, axis=2), axis=2)
         inputs_tiled = tf.tile(inputs_expanded, [1, 1, self.units, 1, 1])
-        if self.mapfn_parallel_iterations == None:
+        if self.mapfn_parallel_iterations == 0:
             W_tile = tf.tile(self.W, [tf.shape(inputs_tiled)[0], 1, 1, 1, 1])
             # inputs_hat: [?, units_in, units, 1, dim]
             inputs_hat = tf.matmul(inputs_tiled, W_tile)
@@ -148,7 +148,7 @@ def squash(tensor, axis=-1, epsilon=1e-9):
     return out
 
 
-def dense(inputs, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+def dense(inputs, units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=0, kernel_initializer=None, trainable=True,
                name=None):
     layer = _Caps(units, dim, iter_routing=iter_routing, learn_coupling=learn_coupling,
                   kernel_initializer=kernel_initializer, 
@@ -156,7 +156,7 @@ def dense(inputs, units, dim, iter_routing=2, learn_coupling=False, mapfn_parall
                   trainable=trainable, name=name)
     return layer.apply(inputs)
 
-def dense_layer(units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=None, kernel_initializer=None, trainable=True,
+def dense_layer(units, dim, iter_routing=2, learn_coupling=False, mapfn_parallel_iterations=0, kernel_initializer=None, trainable=True,
                name=None):
     layer = _Caps(units, dim, iter_routing=iter_routing, learn_coupling=learn_coupling,
                   kernel_initializer=kernel_initializer, 
