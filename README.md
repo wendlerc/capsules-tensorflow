@@ -1,7 +1,19 @@
 # capsules-tensorflow
-Another implementation of Hinton's capsule networks in tensorflow. At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829). Everything seems to work now. Accuracy with 3 routing iterations, regularization, a batch size of 256 and 20 epochs of training: 99,5%. Larger experiments are performed at the moment.
+Another implementation of Hinton's capsule networks in tensorflow. At the moment the implementation provides the means to set up the model presented in [Dynamic Routing Between Capsules](https://arxiv.org/abs/1710.09829). 
 
-## Preliminary results:
+## Results:
+
+Results of **this** implementation on MNIST with batch size 256, learning rate decay 0.95, regularization weight 0.4:
+
+| Epochs        | Routing Iterations | Regularization  | Accuracy |
+| ---           | ---                | ---             | ---      |
+| 20            | 1                  | Off             | 99.51%   |
+| 20            | 1                  | On              | 99.62%   |
+| 20            | 3                  | Off             | 99.30%   |
+| 20            | 3                  | On              | 99.47%   |
+| 500           | 1                  | On              | 99.55%   |
+| 500           | 3                  | On              | 99.50%   |
+
 Here are some reconstructions of testset digits obtained by the encoder of a capsnet trained on MNIST for 20 and 100 epochs with regularization and iter_routing=2:
 
 <img src="https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/results_20epochs.png" width="280" heigth="570"> <img src="https://github.com/chrislybaer/capsules-tensorflow/blob/master/results/results_100epochs.png" width="280" heigth="570"> 
