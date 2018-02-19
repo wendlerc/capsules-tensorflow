@@ -55,7 +55,7 @@ class _Caps(base.Layer):
         # W_tile shape: [?, units_in, units, dim_in, dim]
         inputs_hat = self._compute_inputs_hat(inputs)
         b_tiled = self._routing(inputs_hat)
-        c = tf.nn.softmax(b_tiled, dim=2) 
+        c = tf.nn.softmax(b_tiled, axis=2) 
         outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
         outputs = tf.reshape(outputs, [-1, self.units, self.dim])
         return outputs
@@ -80,7 +80,7 @@ class _Caps(base.Layer):
             b_tiled = tf.zeros([tf.shape(inputs_hat)[0], self.units_in, self.units, 1, 1])
             
         for i in range(self.iter_routing):
-            c = tf.nn.softmax(b_tiled, dim=2) 
+            c = tf.nn.softmax(b_tiled, axis=2) 
             outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
             b_tiled += tf.reduce_sum(inputs_hat * outputs, axis=-1, keep_dims=True)
         return b_tiled
