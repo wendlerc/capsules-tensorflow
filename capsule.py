@@ -56,7 +56,7 @@ class _Caps(base.Layer):
         inputs_hat = self._compute_inputs_hat(inputs)
         b_tiled = self._routing(inputs_hat)
         c = tf.nn.softmax(b_tiled, axis=2) 
-        outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
+        outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keepdims=True))
         outputs = tf.reshape(outputs, [-1, self.units, self.dim])
         return outputs
     
@@ -81,8 +81,8 @@ class _Caps(base.Layer):
             
         for i in range(self.iter_routing):
             c = tf.nn.softmax(b_tiled, axis=2) 
-            outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keep_dims=True))
-            b_tiled += tf.reduce_sum(inputs_hat * outputs, axis=-1, keep_dims=True)
+            outputs = squash(tf.reduce_sum(c * inputs_hat, axis=1, keepdims=True))
+            b_tiled += tf.reduce_sum(inputs_hat * outputs, axis=-1, keepdims=True)
         return b_tiled
     
     def _compute_output_shape(self, input_shape):
@@ -142,7 +142,7 @@ def squash(tensor, axis=-1, epsilon=1e-9):
     Returns:
         Output tensor.
     """
-    sq_norm = tf.reduce_sum(tf.square(tensor), axis, keep_dims=True)
+    sq_norm = tf.reduce_sum(tf.square(tensor), axis, keepdims=True)
     scale_factor = sq_norm / ((1 + sq_norm) * tf.sqrt(sq_norm + epsilon))
     out = scale_factor * tensor  
     return out
